@@ -1,0 +1,49 @@
+<!-- tracks/templates/tracks/music_list.html -->
+{% extends 'tracks/base.html' %}
+
+{% block title %}Library - Opus Collection{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+    <h2>Your Collection</h2>
+    <a href="{% url 'music_create' %}" class="btn">Add New Track</a>
+</div>
+
+<!-- A responsive grid that automatically adjusts based on screen size -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+    
+    <!-- This loops through every song in your database -->
+    {% for track in tracks %}
+        <div class="glass-card">
+            <h3 style="margin-top: 0; margin-bottom: 10px;">{{ track.title }}</h3>
+            <p style="color: var(--gold-accent); margin: 0 0 10px 0; font-size: 1.1rem;">{{ track.artist }}</p>
+            <p style="font-size: 0.85rem; margin-bottom: 20px; opacity: 0.8;">
+                {{ track.genre }} &nbsp;|&nbsp; Added: {{ track.add_date|date:"M d, Y" }}
+            </p>
+            
+            <!-- The built-in audio player -->
+            {% if track.audio_file %}
+                <audio controls controlsList="nodownload">
+                    <source src="{{ track.audio_file.url }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            {% endif %}
+
+            <!-- Action Buttons mapping to our URL <int:pk> setup -->
+            <div style="margin-top: 25px; display: flex; gap: 15px;">
+                <a href="{% url 'music_update' track.pk %}" class="btn" style="padding: 8px 20px; font-size: 0.8rem;">Edit</a>
+                <a href="{% url 'music_delete' track.pk %}" class="btn" style="padding: 8px 20px; font-size: 0.8rem; background: rgba(255, 50, 50, 0.1); border-color: rgba(255, 50, 50, 0.4); color: #ffb3b3;">Delete</a>
+            </div>
+        </div>
+        
+    <!-- If the database is completely empty, show this instead -->
+    {% empty %}
+        <div class="glass-card" style="text-align: center; grid-column: 1 / -1; padding: 60px 20px;">
+            <h3 style="font-size: 2rem;">The Vault is Empty</h3>
+            <p style="margin-bottom: 30px; opacity: 0.8;">Upload your first masterpiece to begin your collection.</p>
+            <a href="{% url 'music_create' %}" class="btn">Upload Now</a>
+        </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
