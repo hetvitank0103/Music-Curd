@@ -46,4 +46,21 @@
     {% endfor %}
 
 </div>
+
+
+<script>
+        // Listen for ANY play event on the page
+        document.addEventListener('play', function(e) {
+            // Find every single audio player
+            var audios = document.querySelectorAll('audio');
+            
+            // Loop through them
+            audios.forEach(function(audio) {
+                // If the audio player is NOT the one we just clicked, pause it
+                if (audio !== e.target) {
+                    audio.pause();
+                }
+            });
+        }, true);
+    </script>
 {% endblock %}
