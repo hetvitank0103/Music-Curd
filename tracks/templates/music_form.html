@@ -1,0 +1,96 @@
+<!-- tracks/templates/tracks/music_form.html -->
+{% extends 'tracks/base.html' %}
+
+<!-- Change the browser tab title depending on if we are creating or updating -->
+{% block title %}{% if object %}Edit Track{% else %}Upload Track{% endif %} - Opus Collection{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="glass-card">
+        
+        <h2 style="text-align: center; margin-bottom: 30px;">
+            {% if object %}Edit Masterpiece{% else %}Upload New Masterpiece{% endif %}
+        </h2>
+
+        <!-- ENCTYPE IS REQUIRED: If you forget multipart/form-data, the MP3 will not upload! -->
+        <form method="POST" enctype="multipart/form-data">
+            
+            <!-- CSRF TOKEN IS REQUIRED: Protects your site from cross-site hackers -->
+            {% csrf_token %}
+            
+            <div class="custom-form">
+                {{ form.as_p }}
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+                <a href="{% url 'music_list' %}" class="btn" style="background: transparent; border-color: rgba(255,255,255,0.3); color: #ccc;">Cancel</a>
+                
+                <button type="submit" class="btn">
+                    {% if object %}Save Changes{% else %}Upload Track{% endif %}
+                </button>
+            </div>
+            
+        </form>
+    </div>
+</div>
+
+<!-- Styling to make Django's default form inputs look Royal -->
+<style>
+    .custom-form p {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+    
+    .custom-form label {
+        font-family: 'Playfair Display', serif;
+        color: var(--gold-accent);
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .custom-form input, 
+    .custom-form select {
+        background: rgba(19, 3, 33, 0.5);
+        border: 1px solid var(--glass-border);
+        color: var(--text-light);
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+    }
+
+    .custom-form input:focus, 
+    .custom-form select:focus {
+        border-color: var(--gold-accent);
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        background: rgba(19, 3, 33, 0.8);
+    }
+
+    /* Make the ugly default file picker button look elegant */
+    .custom-form input[type="file"] {
+        padding: 10px;
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px dashed var(--gold-accent);
+        cursor: pointer;
+    }
+    
+    .custom-form input[type="file"]::file-selector-button {
+        background: var(--light-purple);
+        color: var(--gold-accent);
+        border: 1px solid var(--gold-accent);
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        margin-right: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .custom-form input[type="file"]::file-selector-button:hover {
+        background: var(--gold-accent);
+        color: var(--deep-violet);
+    }
+</style>
+{% endblock %}
