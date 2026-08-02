@@ -4,10 +4,26 @@
 {% block title %}Library - Opus Collection{% endblock %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <h2>Your Collection</h2>
     <a href="{% url 'music_create' %}" class="btn">Add New Track</a>
 </div>
+
+<!-- SEARCH BAR SECTION -->
+<div style="margin-bottom: 40px; display: flex; justify-content: center;">
+    <form method="GET" style="display: flex; gap: 10px; width: 100%; max-width: 600px;">
+        <input type="text" name="search" placeholder="Search by song name..." value="{{ request.GET.search }}" 
+               style="flex-grow: 1; padding: 12px 25px; border-radius: 30px; border: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: blur(10px); color: var(--text-light); font-family: 'Poppins', sans-serif; font-size: 1rem; outline: none; transition: 0.3s;">
+        
+        <button type="submit" class="btn" style="padding: 12px 30px;">Search</button>
+        
+        <!-- If a search is active, show a 'Clear' button to reset the list -->
+        {% if request.GET.search %}
+            <a href="{% url 'music_list' %}" class="btn" style="background: transparent; border-color: rgba(255,255,255,0.2); color: #ccc;">Clear</a>
+        {% endif %}
+    </form>
+</div>
+<!-- END SEARCH BAR SECTION -->
 
 <!-- A responsive grid that automatically adjusts based on screen size -->
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
@@ -36,31 +52,26 @@
             </div>
         </div>
         
-    <!-- If the database is completely empty, show this instead -->
+    <!-- If the database is empty OR the search found zero matches -->
     {% empty %}
         <div class="glass-card" style="text-align: center; grid-column: 1 / -1; padding: 60px 20px;">
-            <h3 style="font-size: 2rem;">The Vault is Empty</h3>
-            <p style="margin-bottom: 30px; opacity: 0.8;">Upload your first masterpiece to begin your collection.</p>
+            <h3 style="font-size: 2rem;">No Tracks Found</h3>
+            <p style="margin-bottom: 30px; opacity: 0.8;">Upload a new masterpiece or try a different search term.</p>
             <a href="{% url 'music_create' %}" class="btn">Upload Now</a>
         </div>
     {% endfor %}
 
 </div>
 
-
+<!-- JavaScript to prevent multiple tracks from playing simultaneously -->
 <script>
-        // Listen for ANY play event on the page
-        document.addEventListener('play', function(e) {
-            // Find every single audio player
-            var audios = document.querySelectorAll('audio');
-            
-            // Loop through them
-            audios.forEach(function(audio) {
-                // If the audio player is NOT the one we just clicked, pause it
-                if (audio !== e.target) {
-                    audio.pause();
-                }
-            });
-        }, true);
-    </script>
+    document.addEventListener('play', function(e) {
+        var audios = document.querySelectorAll('audio');
+        audios.forEach(function(audio) {
+            if (audio !== e.target) {
+                audio.pause();
+            }
+        });
+    }, true);
+</script>
 {% endblock %}

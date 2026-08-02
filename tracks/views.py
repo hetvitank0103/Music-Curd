@@ -7,9 +7,20 @@ from .models import Music
 class MusicListView(ListView):
     model = Music
     template_name = 'tracks/music_list.html'
-    context_object_name = 'tracks'  # This is the variable name we will use in the HTML file
-    ordering = ['-add_date']        # The minus sign means "Newest first"
+    context_object_name = 'tracks'
 
+    def get_queryset(self):
+        # 1. Start by ordering everything alphabetically by the 'title' field
+        queryset = Music.objects.all().order_by('title')
+        
+        # 2. Check if the user typed anything into our search box
+        search_keyword = self.request.GET.get('search')
+        if search_keyword:
+            # 3. Filter the results (icontains means "case-insensitive match")
+            queryset = queryset.filter(title__icontains=search_keyword)
+            
+        return queryset
+    
 # CREATE: Displays the upload form and saves new songs
 class MusicCreateView(CreateView):
     model = Music
